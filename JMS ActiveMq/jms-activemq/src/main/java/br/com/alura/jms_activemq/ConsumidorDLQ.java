@@ -13,7 +13,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 
-public class ConsumidorFila 
+public class ConsumidorDLQ 
 {
     public static void main( String[] args ) throws Exception 
     {
@@ -23,30 +23,16 @@ public class ConsumidorFila
     	
     	Connection connection = factory.createConnection();
     	connection.start();
-    	
-//		Confirma recebimento de mensagem automaticamente.
-//    	Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    	Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-//		Precisa confirmar recebimento de mensagem "message.acknowledge();"
-//    	Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-    	
-    	final Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
-    	Destination fila = (Destination) context.lookup("financeiro");
+    	Destination fila = (Destination) context.lookup("DLQ");
 		MessageConsumer consumer = session.createConsumer(fila);
 		
 		consumer.setMessageListener(new MessageListener() {
 			
 			public void onMessage(Message message) {
 				
-				TextMessage textMessage = (TextMessage) message;
-				try {
-//					message.acknowledge();
-					System.out.println(textMessage.getText());
-					session.commit();
-//					session.rollback();
-				} catch (JMSException e) {
-					e.printStackTrace();
-				}
+			System.out.println(message);
 				
 			}
 		});

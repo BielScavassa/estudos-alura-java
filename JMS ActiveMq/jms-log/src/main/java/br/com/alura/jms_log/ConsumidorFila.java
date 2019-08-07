@@ -1,4 +1,4 @@
-package br.com.alura.jms_activemq;
+package br.com.alura.jms_log;
 
 import java.util.Scanner;
 
@@ -24,14 +24,8 @@ public class ConsumidorFila
     	Connection connection = factory.createConnection();
     	connection.start();
     	
-//		Confirma recebimento de mensagem automaticamente.
-//    	Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-//		Precisa confirmar recebimento de mensagem "message.acknowledge();"
-//    	Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-    	
-    	final Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
-    	Destination fila = (Destination) context.lookup("financeiro");
+    	final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    	Destination fila = (Destination) context.lookup("LOG");
 		MessageConsumer consumer = session.createConsumer(fila);
 		
 		consumer.setMessageListener(new MessageListener() {
@@ -40,10 +34,7 @@ public class ConsumidorFila
 				
 				TextMessage textMessage = (TextMessage) message;
 				try {
-//					message.acknowledge();
 					System.out.println(textMessage.getText());
-					session.commit();
-//					session.rollback();
 				} catch (JMSException e) {
 					e.printStackTrace();
 				}

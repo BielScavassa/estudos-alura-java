@@ -1,15 +1,12 @@
 package br.com.alura.jms_activemq;
 
-import java.io.StringWriter;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.naming.InitialContext;
-import javax.xml.bind.JAXB;
 
 import br.com.alura.modelo.Pedido;
 import br.com.alura.modelo.PedidoFactory;
@@ -29,14 +26,15 @@ public class ProdutorTopico {
 		MessageProducer producer = session.createProducer(topico);
 
 		Pedido pedido = new PedidoFactory().geraPedidoComValores();
+		
+//		Parseando xml
+//		StringWriter stringWriter = new StringWriter();
+//		JAXB.marshal(pedido, stringWriter);
+//		String xml = stringWriter.toString();
+//		System.out.println(xml);
 
-		StringWriter stringWriter = new StringWriter();
-		JAXB.marshal(pedido, stringWriter);
-		String xml = stringWriter.toString();
-
-		System.out.println(xml);
-
-		TextMessage message = session.createTextMessage(xml);
+		Message message = session.createObjectMessage(pedido);
+//		Busca com property
 //		message.setBooleanProperty("ebook", true);
 		producer.send(message);
 
